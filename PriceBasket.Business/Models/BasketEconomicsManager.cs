@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PriceBasket.Business.Models
 {
-    public class BasketEconomicsManager
+    public class BasketEconomicsManager : IBasketEconomicsManager
     {
         private readonly ConcurrentDictionary<string, BasketItemEconomics> basketItemEconomicses;
 
@@ -15,9 +15,12 @@ namespace PriceBasket.Business.Models
         {
             basketItemEconomicses = new ConcurrentDictionary<string, BasketItemEconomics>();
         }
-        public bool TryAddItem(string itemName, BasketItemEconomics item)
-        {
-            return true;
-        }
+        public bool TryAddEconomics(string itemName, BasketItemEconomics item) => basketItemEconomicses.TryAdd(itemName, item);
+
+        public BasketItemEconomics AddOrUpdateEconomics(string itemName, Func<string, BasketItemEconomics> addValueFactory,
+            Func<string, BasketItemEconomics, BasketItemEconomics> updateValueFactory)
+            => basketItemEconomicses.AddOrUpdate(itemName, addValueFactory, updateValueFactory);
+
+        public int Count => basketItemEconomicses.Count;
     }
 }

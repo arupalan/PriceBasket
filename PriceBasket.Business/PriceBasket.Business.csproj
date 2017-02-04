@@ -43,6 +43,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Models\BasketEconomicsManager.cs" />
     <Compile Include="Models\BasketItemEconomics.cs" />
+    <Compile Include="Models\IBasketEconomicsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

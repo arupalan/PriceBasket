@@ -3,3 +3,9 @@
 ################################################################################
 
 /packages/Autofac.4.3.0
+/.vs/PriceBasket/v14
+/packages/Newtonsoft.Json.9.0.1
+/PriceBasket.Business/bin/Debug
+/PriceBasket.Business/obj/Debug
+/PriceBasket.Service/bin/Debug
+/PriceBasket.Service/obj/Debug

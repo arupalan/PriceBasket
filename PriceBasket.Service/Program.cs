@@ -11,14 +11,33 @@ namespace PriceBasket.Service
 
         static void Main(string[] args)
         {
-            try
-            {
-                var service = new PriceBasketService();
-            }
-            catch (Exception e)
-            {
-                
-            }
+                String command;
+                Boolean quitNow = false;
+                Console.Clear();
+                while (!quitNow)
+                {
+                    Console.Write(">");
+                    command = Console.ReadLine();
+                    Console.WriteLine(command);
+                    switch (command)
+                    {
+                        case "help":
+                            Console.WriteLine("This should be help.");
+                            break;
+
+                        case "/version":
+                            Console.WriteLine("This should be version.");
+                            break;
+
+                        case "quit":
+                            quitNow = true;
+                            break;
+
+                        default:
+                            Console.WriteLine("Unknown Command " + command);
+                            break;
+                    }
+                }
         }
     }
 }

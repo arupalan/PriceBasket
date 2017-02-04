@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
+using PriceBasket.Business.Models;
+using PriceBasket.Service.DependencyInjection;
 
 namespace PriceBasket.Service
 {
     class Program
     {
-
         static void Main(string[] args)
         {
-                String command;
+            var logger = DependencyInjector.Resolve<ILog>();
+            logger.Info("PriceBasket Service Started");
+            var basketEconomicsManager = DependencyInjector.Resolve<IBasketEconomicsManager>();
+            Console.WriteLine(basketEconomicsManager.Count);
+            String command;
                 Boolean quitNow = false;
-                Console.Clear();
                 while (!quitNow)
                 {
                     Console.Write(">");

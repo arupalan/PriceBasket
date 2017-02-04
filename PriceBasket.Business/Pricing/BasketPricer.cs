@@ -16,5 +16,10 @@ namespace PriceBasket.Business.Pricing
         {
             this.BasketEconomicsManager = basketEconomicsManager;
         }
+
+        public void Price(List<> )
+        {
+            
+        }
     }
 }

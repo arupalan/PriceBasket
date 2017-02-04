@@ -54,6 +54,9 @@ namespace PriceBasket.Service.DependencyInjection
             builder.RegisterType<BasketEconomicsManager>()
                 .As<IBasketEconomicsManager>()
                 .SingleInstance();
+            builder.RegisterType<BasketEconomicsManager>()
+                .As<IBasketEconomicsManager>()
+                .SingleInstance();
 
         }
 

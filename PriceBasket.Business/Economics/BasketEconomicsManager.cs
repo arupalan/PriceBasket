@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net;
+using PriceBasket.Business.Models;
 
-namespace PriceBasket.Business.Models
+namespace PriceBasket.Business.Economics
 {
     public class BasketEconomicsManager : IBasketEconomicsManager
     {
@@ -16,7 +13,7 @@ namespace PriceBasket.Business.Models
         public BasketEconomicsManager(ILog logger)
         {
             this.logger = logger;
-            logger.Info("BasketEconomicsManager Constructor Initialized");
+            logger.Debug("BasketEconomicsManager Constructor Initialized");
             basketItemEconomicses = new ConcurrentDictionary<string, BasketItemEconomics>();
         }
 

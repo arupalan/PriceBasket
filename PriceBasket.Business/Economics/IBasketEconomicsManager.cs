@@ -1,6 +1,7 @@
 ﻿using System;
+using PriceBasket.Business.Models;
 
-namespace PriceBasket.Business.Models
+namespace PriceBasket.Business.Economics
 {
     public interface IBasketEconomicsManager
     {

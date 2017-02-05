@@ -6,6 +6,6 @@ namespace PriceBasket.Business.Pricing
 {
     public interface IBasketPricer
     {
-        Task<List<BasketItem>> PriceAsync(List<BasketItem> basketItems);
+        Task<List<BasketResultItem>> PriceAsync(List<BasketRequestItem> basketItems);
     }
 }

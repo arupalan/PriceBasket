@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using PriceBasket.Business.Economics;
 using PriceBasket.Business.Models;
 
 
@@ -22,16 +23,19 @@ namespace PriceBasket.Business.Pricing
             this.basketEconomicsManager = basketEconomicsManager;
         }
 
-        public async Task<List<BasketItem>> PriceAsync(List<BasketItem> basketItems)
+        public async Task<List<BasketResultItem>> PriceAsync(List<BasketRequestItem> basketItems)
         {
-            var result = new List<BasketItem>();
+            var result = new List<BasketResultItem>();
             foreach (var item in basketItems)
             {
                 BasketItemEconomics basketItemEconomics;
                 if (basketEconomicsManager.TryGetEconomics(item.Name, out basketItemEconomics))
                 {
-                    item.Value = basketItemEconomics.Price*item.Count*(1 - basketItemEconomics.Discount);
-                    result.Add(item);
+                    var resultItem = new BasketResultItem(item)
+                    {
+                        Value = basketItemEconomics.Price*item.Unit*(1 - basketItemEconomics.Discount)
+                    };
+                    result.Add(resultItem);
                 }
                 else
                 {

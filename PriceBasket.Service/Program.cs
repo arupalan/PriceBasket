@@ -7,108 +7,53 @@ using log4net;
 using PriceBasket.Business.Pricing;
 using PriceBasket.Service.DependencyInjection;
 using CommandLine;
+using CommandLine.Text;
 using Newtonsoft.Json;
+using PriceBasket.Business.Economics;
+using PriceBasket.Business.Models;
+using PriceBasket.Business.Verbs;
 
 namespace PriceBasket.Service
 {
-    class CommitSubOptions
-    {
-        [Option('a', "all", HelpText = "Tell the command to automatically stage files.")]
-        public bool All { get; set; }
-        public bool Patch { get; set; }
-        // Remainder omitted
-    }
-
-    class PushSubOptions
-    {
-        // Remainder omitted
-    }
-
-    class TagSubOptions
-    {
-        // Remainder omitted 
-    }
-
-    class Options
-    {
-        public Options()
-        {
-            // Since we create this instance the parser will not overwrite it
-            CommitVerb = new CommitSubOptions { };
-        }
-
-        [VerbOption("commit", HelpText = "Record changes to the repository.")]
-        public CommitSubOptions CommitVerb { get; set; }
-
-        [VerbOption("push", HelpText = "Update remote refs along with associated objects.")]
-        public PushSubOptions AddVerb { get; set; }
-
-        [VerbOption("tag", HelpText = "Update remote refs along with associated objects.")]
-        public TagSubOptions TagVerb { get; set; }
-    }
 
     class Program
     {
         static void Main(string[] args)
         {
             var logger = DependencyInjector.Resolve<ILog>();
-            logger.Info("PriceBasket Service Started");
-            var basketEconomicsManager = DependencyInjector.Resolve<IBasketPricer>();
-
-            string invokedVerb = "";
-            object invokedVerbInstance = new object();
-
-            var options = new Options();
-
-            if (!CommandLine.Parser.Default.ParseArgumentsStrict(args, options,
-              (verb, subOptions) => {
-              // if parsing succeeds the verb name and correct instance
-              // will be passed to onVerbCommand delegate (string,object)
-              invokedVerb = verb;
-              invokedVerbInstance = subOptions;
-              logger.Info("Commandline Parsing succeeded");
-              logger.Info(invokedVerb);
-              logger.Info(JsonConvert.SerializeObject(invokedVerbInstance));
-
-              })) {
-                logger.Error("Parsing failed");
-                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
-            }
-
-            if (invokedVerb == "commit")
+            try
             {
-                var commitSubOptions = (CommitSubOptions)invokedVerbInstance;
-                logger.Info(JsonConvert.SerializeObject(commitSubOptions));
+                Initialize();
+                var commandProcessor = DependencyInjector.Resolve<ICommandProcessor>();
+                var process = commandProcessor.ProcessVerbs(args);
+
+                while (process)
+                {
+                    process = commandProcessor.ProcessVerbs();
+                }
             }
+            catch (Exception ex)
+            {
+                logger.Error("Fatal Exception!!",ex);
+            }
+        }
 
-            //String command;
-            //    Boolean quitNow = false;
-            //    while (!quitNow)
-            //    {
-            //        Console.Write(">");
-            //        command = Console.ReadLine();
-            //        Console.WriteLine(command);
-            //        switch (command.ToLower())
-            //        {
-            //            case "help":
-            //                Console.WriteLine("This should be help.");
-            //                break;
-
-            //            case "pricebasket":
-            //            {
-            //                Console.Write("PriceBasket>");
-            //                command = Console.ReadLine();
-            //                break;
-            //            }
-            //            case "quit":
-            //                quitNow = true;
-            //                break;
-
-            //            default:
-            //                Console.WriteLine("Unknown Command " + command);
-            //                break;
-            //        }
-            //    }
+        private static void Initialize()
+        {
+            var logger = DependencyInjector.Resolve<ILog>();
+            logger.Info("PriceBasket Service Starting...");
+            logger.Info("Initializing Basket Economics Manager...");
+            var basketEconomicsManager = DependencyInjector.Resolve<IBasketEconomicsManager>();
+            var appleItemEconomics = new BasketItemEconomics() {Name = "Apple", Discount = 0.1M, Price = 1.00M};
+            var breadItemEconomics = new BasketItemEconomics() {Name = "Bread", Discount = null, Price = 0.80M};
+            var milkItemEconomics = new BasketItemEconomics() {Name = "Milk", Discount = null, Price = 1.30M};
+            var soupItemEconomics = new BasketItemEconomics() {Name = "Soup", Discount = null, Price = 0.65M};
+            basketEconomicsManager.AddOrUpdateEconomics("Apple", key => appleItemEconomics, (key, oldValue) => appleItemEconomics);
+            basketEconomicsManager.AddOrUpdateEconomics("Bread", key => breadItemEconomics, (key, oldValue) => breadItemEconomics);
+            basketEconomicsManager.AddOrUpdateEconomics("Milk", key => milkItemEconomics, (key, oldValue) => milkItemEconomics);
+            basketEconomicsManager.AddOrUpdateEconomics("Soup", key => soupItemEconomics, (key, oldValue) => soupItemEconomics);
+            logger.Info("Current Active Economics...");
+            logger.Info(JsonConvert.SerializeObject(new List<BasketItemEconomics> {appleItemEconomics,breadItemEconomics,milkItemEconomics,soupItemEconomics}));
         }
     }
 }

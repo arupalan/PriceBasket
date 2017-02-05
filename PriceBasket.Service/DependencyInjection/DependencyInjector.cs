@@ -8,7 +8,9 @@ using Autofac;
 using PriceBasket.Business.Models;
 using PriceBasket.Service.DependencyInjection.Modules;
 using log4net;
+using PriceBasket.Business.Economics;
 using PriceBasket.Business.Pricing;
+using PriceBasket.Business.Verbs;
 
 namespace PriceBasket.Service.DependencyInjection
 {
@@ -60,6 +62,9 @@ namespace PriceBasket.Service.DependencyInjection
                 .SingleInstance();
             builder.RegisterType<BasketPricer>()
                 .As<IBasketPricer>()
+                .SingleInstance();
+            builder.RegisterType<CommandProcessor>()
+                .As<ICommandProcessor>()
                 .SingleInstance();
 
         }

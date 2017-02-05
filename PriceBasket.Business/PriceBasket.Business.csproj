@@ -30,8 +30,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -44,13 +52,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\BasketEconomicsManager.cs" />
-    <Compile Include="Models\BasketItem.cs" />
+    <Compile Include="Verbs\CommandProcessor.cs" />
+    <Compile Include="Economics\BasketEconomicsManager.cs" />
+    <Compile Include="Models\BasketRequestItem.cs" />
+    <Compile Include="Models\BasketResultItem.cs" />
     <Compile Include="Models\BasketItemEconomics.cs" />
-    <Compile Include="Models\IBasketEconomicsManager.cs" />
+    <Compile Include="Economics\IBasketEconomicsManager.cs" />
     <Compile Include="Pricing\BasketPricer.cs" />
     <Compile Include="Pricing\IBasketPricer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Verbs\GetEconomicsSubOptions.cs" />
+    <Compile Include="Verbs\ICommandProcessor.cs" />
+    <Compile Include="Verbs\Options.cs" />
+    <Compile Include="Verbs\PriceBasketSubOptions.cs" />
+    <Compile Include="Verbs\PutEconomicsSubOptions.cs" />
+    <Compile Include="Verbs\QuitSubOptions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -9,8 +9,8 @@ namespace PriceBasket.Business.Models
     public class BasketItemEconomics : IEqualityComparer<BasketItemEconomics>
     {
         public string Name { get; set; }
-        public decimal Price { get; set; }
-        public decimal Discount { get; set; }
+        public decimal? Price { get; set; }
+        public decimal? Discount { get; set; }
 
         public bool Equals(BasketItemEconomics x, BasketItemEconomics y)
         {

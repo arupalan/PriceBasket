@@ -9,5 +9,6 @@ namespace PriceBasket.Business.Models
         BasketItemEconomics AddOrUpdateEconomics(string itemName, Func<string, BasketItemEconomics> addValueFactory,
             Func<string, BasketItemEconomics, BasketItemEconomics> updateValueFactory);
         int Count { get; }
+        bool TryGetEconomics(string itemName, out BasketItemEconomics itemEconomics);
     }
 }

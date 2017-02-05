@@ -11,7 +11,7 @@ namespace PriceBasket.Business.Models
     public class BasketEconomicsManager : IBasketEconomicsManager
     {
         private readonly ConcurrentDictionary<string, BasketItemEconomics> basketItemEconomicses;
-        private ILog logger;
+        private readonly ILog logger;
 
         public BasketEconomicsManager(ILog logger)
         {
@@ -27,5 +27,8 @@ namespace PriceBasket.Business.Models
             => basketItemEconomicses.AddOrUpdate(itemName, addValueFactory, updateValueFactory);
 
         public int Count => basketItemEconomicses.Count;
+
+        public bool TryGetEconomics(string itemName, out BasketItemEconomics itemEconomics)
+            => basketItemEconomicses.TryGetValue(itemName, out itemEconomics);
     }
 }

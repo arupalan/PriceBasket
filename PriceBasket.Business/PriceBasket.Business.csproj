@@ -49,6 +49,7 @@
     <Compile Include="Models\BasketItemEconomics.cs" />
     <Compile Include="Models\IBasketEconomicsManager.cs" />
     <Compile Include="Pricing\BasketPricer.cs" />
+    <Compile Include="Pricing\IBasketPricer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -2,18 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using log4net;
 using Newtonsoft.Json;
 using PriceBasket.Business.Models;
+using PriceBasket.Business.Pricing;
+using PriceBasket.Business.Reporter;
 
 namespace PriceBasket.Business.Verbs
 {
     public class CommandProcessor : ICommandProcessor
     {
         private readonly ILog logger;
-        public CommandProcessor(ILog logger)
+        private readonly IBasketPricer pricer;
+        private readonly IBasketPriceReporter reporter;
+        public CommandProcessor(ILog logger, IBasketPricer pricer,IBasketPriceReporter reporter)
         {
             this.logger = logger;
+            this.pricer = pricer;
+            this.reporter = reporter;
         }
 
         public bool ProcessVerbs()
@@ -64,6 +71,19 @@ namespace PriceBasket.Business.Verbs
                     logger.Debug(JsonConvert.SerializeObject(commitSubOptions.Basket));
                     var requestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(commitSubOptions.Basket);
                     logger.Debug(JsonConvert.SerializeObject(requestItems));
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var result = await pricer.PriceAsync(requestItems);
+                            await reporter.ReportAsync(result);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error("Fatal Exception",ex);
+                        }
+
+                    }).Wait();
                     return true;
                 case "puteconomics":
                     logger.Info(string.Format("{0} command not available in current version. This is features in v2.0.0.0",invokedVerb));

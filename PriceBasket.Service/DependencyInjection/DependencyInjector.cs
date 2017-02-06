@@ -11,6 +11,7 @@ using log4net;
 using PriceBasket.Business.Economics;
 using PriceBasket.Business.Pricing;
 using PriceBasket.Business.Verbs;
+using PriceBasket.Business.Reporter;
 
 namespace PriceBasket.Service.DependencyInjection
 {
@@ -65,6 +66,9 @@ namespace PriceBasket.Service.DependencyInjection
                 .SingleInstance();
             builder.RegisterType<CommandProcessor>()
                 .As<ICommandProcessor>()
+                .SingleInstance();
+            builder.RegisterType<BasketPriceReporter>()
+                .As<IBasketPriceReporter>()
                 .SingleInstance();
 
         }

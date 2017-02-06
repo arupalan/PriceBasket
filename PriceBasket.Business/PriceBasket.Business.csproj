@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Reporter\BasketPriceReporter.cs" />
+    <Compile Include="Reporter\IBasketPriceReporter.cs" />
     <Compile Include="Verbs\CommandProcessor.cs" />
     <Compile Include="Economics\BasketEconomicsManager.cs" />
     <Compile Include="Models\BasketRequestItem.cs" />

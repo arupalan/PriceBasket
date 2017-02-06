@@ -33,7 +33,8 @@ namespace PriceBasket.Business.Pricing
                 {
                     var resultItem = new BasketResultItem(item)
                     {
-                        Value = basketItemEconomics.Price*item.Unit*(1 - basketItemEconomics.Discount)
+                        Value = basketItemEconomics.Price*item.Unit,
+                        Discount = basketItemEconomics.Discount
                     };
                     result.Add(resultItem);
                 }

@@ -44,16 +44,29 @@ namespace PriceBasket.Service
             logger.Info("PriceBasket Service Starting...");
             logger.Info("Initializing Basket Economics Manager...");
             var basketEconomicsManager = DependencyInjector.Resolve<IBasketEconomicsManager>();
-            var appleItemEconomics = new BasketItemEconomics() {Name = "Apple", Discount = 0.1M, Price = 1.00M};
-            var breadItemEconomics = new BasketItemEconomics() {Name = "Bread", Discount = null, Price = 0.80M};
-            var milkItemEconomics = new BasketItemEconomics() {Name = "Milk", Discount = null, Price = 1.30M};
-            var soupItemEconomics = new BasketItemEconomics() {Name = "Soup", Discount = null, Price = 0.65M};
-            basketEconomicsManager.AddOrUpdateEconomics("Apple", key => appleItemEconomics, (key, oldValue) => appleItemEconomics);
-            basketEconomicsManager.AddOrUpdateEconomics("Bread", key => breadItemEconomics, (key, oldValue) => breadItemEconomics);
-            basketEconomicsManager.AddOrUpdateEconomics("Milk", key => milkItemEconomics, (key, oldValue) => milkItemEconomics);
-            basketEconomicsManager.AddOrUpdateEconomics("Soup", key => soupItemEconomics, (key, oldValue) => soupItemEconomics);
-            logger.Info("Current Active Economics...");
-            logger.Info(JsonConvert.SerializeObject(new List<BasketItemEconomics> {appleItemEconomics,breadItemEconomics,milkItemEconomics,soupItemEconomics}));
+            var itemEconomics = new List<BasketItemEconomics>
+            {
+                new BasketItemEconomics {Name = "Apple", Discount = 0.1M, Price = 1.00M},
+                new BasketItemEconomics {Name = "Bread", Discount = null, Price = 0.80M},
+                new BasketItemEconomics {Name = "Milk", Discount = null, Price = 1.30M},
+                new BasketItemEconomics {Name = "Soup", Discount = null, Price = 0.65M}
+            };
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await basketEconomicsManager.ResetItemEconomicsAsync(itemEconomics);
+                }
+                catch (AggregateException ex)
+                {
+                    logger.Error("Fatal Exception ResetItemEconomicsAsync", ex);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Fatal Exception ResetItemEconomicsAsync", ex);
+                }
+            }).Wait();
+            logger.Info(string.Format("Current Active Economics...{0}", JsonConvert.SerializeObject(itemEconomics)));
         }
     }
 }

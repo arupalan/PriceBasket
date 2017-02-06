@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using log4net;
 using PriceBasket.Business.Models;
+using System.Threading.Tasks;
 
 namespace PriceBasket.Business.Economics
 {
@@ -15,6 +17,14 @@ namespace PriceBasket.Business.Economics
             this.logger = logger;
             logger.Debug("BasketEconomicsManager Constructor Initialized");
             basketItemEconomicses = new ConcurrentDictionary<string, BasketItemEconomics>();
+        }
+
+        public async Task ResetItemEconomicsAsync(List<BasketItemEconomics> economicItems)
+        {
+            foreach (var item in economicItems)
+            {
+                AddOrUpdateEconomics(item.Name, key => item, (key, oldValue) => item);
+            }
         }
 
         public bool TryAddEconomics(string itemName, BasketItemEconomics item) => basketItemEconomicses.TryAdd(itemName, item);

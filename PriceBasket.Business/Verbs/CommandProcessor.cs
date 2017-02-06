@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using log4net;
 using Newtonsoft.Json;
+using PriceBasket.Business.Economics;
 using PriceBasket.Business.Models;
 using PriceBasket.Business.Pricing;
 using PriceBasket.Business.Reporter;
@@ -16,11 +17,14 @@ namespace PriceBasket.Business.Verbs
         private readonly ILog logger;
         private readonly IBasketPricer pricer;
         private readonly IBasketPriceReporter reporter;
-        public CommandProcessor(ILog logger, IBasketPricer pricer,IBasketPriceReporter reporter)
+        private readonly IBasketEconomicsManager economicsManager;
+
+        public CommandProcessor(ILog logger, IBasketPricer pricer,IBasketEconomicsManager economicsManager, IBasketPriceReporter reporter)
         {
             this.logger = logger;
             this.pricer = pricer;
             this.reporter = reporter;
+            this.economicsManager = economicsManager;
         }
 
         public bool ProcessVerbs()
@@ -67,9 +71,9 @@ namespace PriceBasket.Business.Verbs
             switch (invokedVerb)
             {
                 case "pricebasket":
-                    var commitSubOptions = (PriceBasketSubOptions)invokedVerbInstance;
-                    logger.Debug(JsonConvert.SerializeObject(commitSubOptions.Basket));
-                    var requestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(commitSubOptions.Basket);
+                    var pricebasketSubOptions = (PriceBasketSubOptions)invokedVerbInstance;
+                    logger.Debug(JsonConvert.SerializeObject(pricebasketSubOptions.Basket));
+                    var requestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(pricebasketSubOptions.Basket);
                     logger.Debug(JsonConvert.SerializeObject(requestItems));
                     Task.Run(async () =>
                     {
@@ -86,7 +90,26 @@ namespace PriceBasket.Business.Verbs
                     }).Wait();
                     return true;
                 case "puteconomics":
-                    logger.Info(string.Format("{0} command not available in current version. This is features in v2.0.0.0",invokedVerb));
+                    var puteconomicsSubOptions = (PutEconomicsSubOptions)invokedVerbInstance;
+                    logger.Debug(JsonConvert.SerializeObject(puteconomicsSubOptions.ItemEconomics));
+                    var itemEconomics = JsonConvert.DeserializeObject<List<BasketItemEconomics>>(puteconomicsSubOptions.ItemEconomics);
+                    logger.Debug(JsonConvert.SerializeObject(itemEconomics));
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await economicsManager.ResetItemEconomicsAsync(itemEconomics);
+                            logger.Info(string.Format("Current Active Economics...{0}", JsonConvert.SerializeObject(itemEconomics)));
+                        }
+                        catch (AggregateException ex)
+                        {
+                            logger.Error("Fatal Exception ResetItemEconomicsAsync", ex);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error("Fatal Exception ResetItemEconomicsAsync", ex);
+                        }
+                    }).Wait();
                     return true;
                 case "quit":
                     return false;

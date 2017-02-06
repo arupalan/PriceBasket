@@ -47,7 +47,12 @@ namespace PriceBasket.Service
             var itemEconomics = new List<BasketItemEconomics>
             {
                 new BasketItemEconomics {Name = "Apple", Discount = 0.1M, Price = 1.00M},
-                new BasketItemEconomics {Name = "Bread", Discount = null, Price = 0.80M},
+                new BasketItemEconomics {Name = "Bread", Discount = null, MultiPackDiscount = new MultiDiscount
+                {
+                    Discount = 0.50M,
+                    ItemName = "Soup",
+                    ItemUnit = 2
+                }, Price = 0.80M},
                 new BasketItemEconomics {Name = "Milk", Discount = null, Price = 1.30M},
                 new BasketItemEconomics {Name = "Soup", Discount = null, Price = 0.65M}
             };

@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace PriceBasket.Business.Models
 {
+    public class MultiDiscount
+    {
+        public string ItemName { get; set; }
+        public int ItemUnit { get; set; }
+        public decimal? Discount { get; set; }
+    }
+
     public class BasketItemEconomics : IEqualityComparer<BasketItemEconomics>
     {
         public string Name { get; set; }
         public decimal? Price { get; set; }
         public decimal? Discount { get; set; }
+        public MultiDiscount MultiPackDiscount { get; set; }
 
         public bool Equals(BasketItemEconomics x, BasketItemEconomics y)
         {

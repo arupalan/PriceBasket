@@ -180,7 +180,7 @@ namespace PriceBasket.Business.Tests.Pricing
         }
 
         [Fact]
-        public async Task AddingMisingEconomicDataToEconomicsManagerWillAllowPricingNewItems()
+        public async Task AddingMisingEconomicDataToEconomicsManagerWillAllowPricingFailingItems()
         {
             string requestdataStream = "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Name':'Bread', 'Unit':0},{'Name':'Oil', 'Unit':1}]";
             var mockrequestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(requestdataStream);
@@ -202,6 +202,30 @@ namespace PriceBasket.Business.Tests.Pricing
             mockrequestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(requestdataStream);
             var basket = await basketPricer.PriceAsync(mockrequestItems);
             Assert.Equal(2.590M, basket.Total);
+        }
+
+        [Fact]
+        public async Task ShouldApplyMultiPackDiscountIfBasketHasMultiPack()
+        {
+            string requestdataStream = "[{'Name':'Apple', 'Unit':0},{'Name':'Milk', 'Unit':0},{'Name':'Bread', 'Unit':1},{'Name':'Soup', 'Unit':2}]";
+            var mockrequestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(requestdataStream);
+            var mockBasketEconomicsManager = new BasketEconomicsManager(mockLogger.Object);
+            await mockBasketEconomicsManager.ResetItemEconomicsAsync(new List<BasketItemEconomics>
+            {
+                new BasketItemEconomics {Name = "Apple", Discount = 0.1M, Price = 1.00M},
+                new BasketItemEconomics {Name = "Bread", Discount = null, MultiPackDiscount = new MultiDiscount
+                {
+                    Discount = 0.50M,
+                    ItemName = "Soup",
+                    ItemUnit = 2
+                }, Price = 0.80M},
+                new BasketItemEconomics {Name = "Milk", Discount = 0.2M, Price = 1.30M},
+                new BasketItemEconomics {Name = "Soup", Discount = null, Price = 0.65M}
+            });
+            var basketPricer = new BasketPricer(mockBasketEconomicsManager, mockLogger.Object);
+            mockrequestItems = JsonConvert.DeserializeObject<List<BasketRequestItem>>(requestdataStream);
+            var basket = await basketPricer.PriceAsync(mockrequestItems);
+            Assert.Equal(1.700M, basket.Total);
         }
     }
 }

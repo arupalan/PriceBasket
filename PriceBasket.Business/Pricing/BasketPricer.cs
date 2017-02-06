@@ -32,27 +32,34 @@ namespace PriceBasket.Business.Pricing
                 BasketItemEconomics basketItemEconomics;
                 if (basketEconomicsManager.TryGetEconomics(item.Name, out basketItemEconomics))
                 {
+                    var discount = (basketItemEconomics.MultiPackDiscount != null) &&
+                                   IsValidMultiPack(basketItemEconomics.MultiPackDiscount, basketItems)
+                        ? basketItemEconomics.MultiPackDiscount.Discount
+                        : basketItemEconomics.Discount;
                     var resultItem = new BasketResultItem(item)
                     {
                         Value = basketItemEconomics.Price*item.Unit,
-                        Discount = basketItemEconomics.Discount,
-                        DiscountPence = Decimal.ToInt32((basketItemEconomics.Discount??0.0M) * (basketItemEconomics.Price??0.0M) * item.Unit * 100)
+                        Discount = discount,
+                        DiscountPence = Decimal.ToInt32((discount ?? 0.0M)*(basketItemEconomics.Price ?? 0.0M)* item.Unit*100)
                     };
-                    subTotal = decimal.Add(subTotal.Value, resultItem.Value??0.0M);
+                    subTotal = decimal.Add(subTotal.Value, resultItem.Value ?? 0.0M);
                     result.Add(resultItem);
                 }
                 else
-                {
-                    throw new Exception(string.Format("No Economics setup for Item {0}. Please configure economics",item.Name));
-                }
+                    throw new Exception($"No Economics setup for Item {item.Name}. Please configure economics");
             }
             var total = subTotal;
             foreach (var basketResultItem in result.Where(basketResultItem => basketResultItem.Discount.HasValue && basketResultItem.Value.HasValue && basketResultItem.Discount.Value * basketResultItem.Value.Value > 0.00009M))
             {
-                total = Decimal.Subtract(total.Value,
-                    (basketResultItem.Discount??0.0M) * (basketResultItem.Value??0.0M));
+                total = Decimal.Subtract(total.Value, (basketResultItem.Discount??0.0M) * (basketResultItem.Value??0.0M));
             }
             return await Task.FromResult(new Basket(result,subTotal,total));
+        }
+
+        private bool IsValidMultiPack(MultiDiscount multipackDiscount, List<BasketRequestItem> basketItems)
+        {
+            return
+                basketItems.Any(item => item.Name == multipackDiscount.ItemName && item.Unit >= multipackDiscount.ItemUnit);
         }
     }
 }

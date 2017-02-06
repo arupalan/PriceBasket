@@ -10,3 +10,6 @@
 /PriceBasket.Service/bin/Debug
 /PriceBasket.Service/obj/Debug
 /packages/log4net.2.0.7
+/packages
+/PriceBasket.Business.Tests/bin/Debug
+/PriceBasket.Business.Tests/obj/Debug

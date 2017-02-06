@@ -16,6 +16,7 @@ namespace PriceBasket.Business.Models
         }
         public decimal? Value { get; set; }
         public decimal? Discount { get; set; }
+        public Int32? DiscountPence { get; set; }
         public BasketRequestItem RequestItem => requestItem;
     }
 }

@@ -6,6 +6,6 @@ namespace PriceBasket.Business.Reporter
 {
     public interface IBasketPriceReporter
     {
-        Task ReportAsync(List<BasketResultItem> result);
+        Task ReportAsync(Basket basket);
     }
 }

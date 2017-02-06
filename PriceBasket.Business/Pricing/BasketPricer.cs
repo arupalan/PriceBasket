@@ -23,9 +23,10 @@ namespace PriceBasket.Business.Pricing
             this.basketEconomicsManager = basketEconomicsManager;
         }
 
-        public async Task<List<BasketResultItem>> PriceAsync(List<BasketRequestItem> basketItems)
+        public async Task<Basket> PriceAsync(List<BasketRequestItem> basketItems)
         {
             var result = new List<BasketResultItem>();
+            decimal? subTotal = 0.0M;
             foreach (var item in basketItems)
             {
                 BasketItemEconomics basketItemEconomics;
@@ -34,8 +35,10 @@ namespace PriceBasket.Business.Pricing
                     var resultItem = new BasketResultItem(item)
                     {
                         Value = basketItemEconomics.Price*item.Unit,
-                        Discount = basketItemEconomics.Discount
+                        Discount = basketItemEconomics.Discount,
+                        DiscountPence = Decimal.ToInt32((basketItemEconomics.Discount??0.0M) * (basketItemEconomics.Price??0.0M) * item.Unit * 100)
                     };
+                    subTotal = decimal.Add(subTotal.Value, resultItem.Value??0.0M);
                     result.Add(resultItem);
                 }
                 else
@@ -43,7 +46,13 @@ namespace PriceBasket.Business.Pricing
                     throw new Exception(string.Format("No Economics setup for Item {0}. Please configure economics",item.Name));
                 }
             }
-            return await Task.FromResult(result);
+            var total = subTotal;
+            foreach (var basketResultItem in result.Where(basketResultItem => basketResultItem.Discount.HasValue && basketResultItem.Value.HasValue && basketResultItem.Discount.Value * basketResultItem.Value.Value > 0.00009M))
+            {
+                total = Decimal.Subtract(total.Value,
+                    (basketResultItem.Discount??0.0M) * (basketResultItem.Value??0.0M));
+            }
+            return await Task.FromResult(new Basket(result,subTotal,total));
         }
     }
 }

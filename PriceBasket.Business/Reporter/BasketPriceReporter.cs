@@ -17,31 +17,19 @@ namespace PriceBasket.Business.Reporter
         {
             this.logger = logger;
         }
-        public async Task ReportAsync(List<BasketResultItem> result)
+        public async Task ReportAsync(Basket basket)
         {
-            logger.Debug(string.Format("Generating report for result {0}", JsonConvert.SerializeObject(result)));
-            var subtotal = result.Aggregate( (accumulated, next) =>
-            {
-                var accumulator = new BasketResultItem(null) {Value = 0.0M};
-                accumulator.Value =
-                    (accumulated.Value.HasValue ? accumulated.Value.Value : 0.0M) +
-                    (next.Value.HasValue ? next.Value.Value : 0.0M);
-                return accumulator;
-            });
-            NumberFormatInfo nfi = new CultureInfo("en-GB", false).NumberFormat;
+            logger.Debug(string.Format("Generating report for result {0}", JsonConvert.SerializeObject(basket.BasketItems)));
+            var nfi = new CultureInfo("en-GB", false).NumberFormat;
             nfi.PercentDecimalDigits = 0;
-            Console.WriteLine("Subtotal: {0}", subtotal.Value.Value.ToString("C2", CultureInfo.CreateSpecificCulture("en-GB")));
-            var total = subtotal.Value.Value;
-            foreach (var basketResultItem in result.Where(basketResultItem => basketResultItem.Discount.HasValue && basketResultItem.Value.HasValue && basketResultItem.Discount.Value*basketResultItem.Value.Value > 0.00009M))
+            Console.WriteLine("Subtotal: {0}", (basket.SubTotal??0.0M).ToString("C2", CultureInfo.CreateSpecificCulture("en-GB")));
+            foreach (var basketResultItem in basket.BasketItems.Where(basketResultItem => basketResultItem.DiscountPence > 0))
             {
                 Console.WriteLine("{0} {1} off: -{2}P", basketResultItem.RequestItem.Name,
-                    (basketResultItem.Discount.Value).ToString("P",nfi),
-                    Decimal.ToInt32(basketResultItem.Discount.Value*basketResultItem.Value.Value*100));
-                total = Decimal.Subtract(total,
-                    basketResultItem.Discount.Value*basketResultItem.Value.Value);
+                    (basketResultItem.Discount ?? 0.0M).ToString("P", nfi), basketResultItem.DiscountPence );
             }
-            if(Decimal.Equals(subtotal.Value.Value,total)) Console.WriteLine("(No offers available)");
-            Console.WriteLine("Total: {0}", total.ToString("C2", CultureInfo.CreateSpecificCulture("en-GB")));
+            if(Decimal.Equals(basket.SubTotal??0.0M,basket.Total??0.0M)) Console.WriteLine("(No offers available)");
+            Console.WriteLine("Total: {0}", (basket.Total??0.0M).ToString("C2", CultureInfo.CreateSpecificCulture("en-GB")));
         } 
     }
 }

@@ -31,27 +31,36 @@ pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Na
 ~~~
 
  ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/PriceBasket-General-Use.png)
-# Building From Source
-1. Move to your local git repository directory or any directory (with git init) in console.
-
-2. Clone repository.
-
-        git clone https://github.com/arupalan/RxTimedWindow.git
-
-3. Move to source directory, update submodule and build.
-
-        cd AlanAamy.Net.RxTimedWindow/
-        git submodule update --init --recursive
-        msbuild
-        
-#Installation
-
- * installutil /LogFile=svcinstalllog.txt AlanAamy.Net.RxTimedWindow.Service.exe
  
- #Debug 
- * You can execute with switch -console to see the logs on console
- ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2015/07/RxTimedWindowErrors.png)
+# Example pricing multipack discount
+~~~
+pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Name':'Bread', 'Unit':1},{'Name':'Soup', 'Unit':2}]"
+~~~
+
+ ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/ExampleMultiPackDiscount.png)
  
- #Diagnostics
- * The diagnostics snapshot of performance
-  ![Diagnostic Mode](http://www.alanaamy.net/wp-content/uploads/2015/07/RxTimedWindowTestsMemory.png)
+# Example Adding a new product economics
+ You will get exception when you price a product with non-existent economics. Eg oil is currently not setup so we get exception. We then put the oil economics and we can now price Oil again without requiring a system restart.
+ 
+~~~
+pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Name':'Bread', 'Unit':0},{'Name':'Oil', 'Unit':0}]"
+puteconomics --itemeconomics "[{'Name':'Oil','Price':0.95,'Discount':0.1}]"
+pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Name':'Bread', 'Unit':0},{'Name':'Oil', 'Unit':1}]"
+~~~
+
+ ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/AddNewProduct.png)
+
+# Pre-requisites and Building From Source
+* .Net Framework 4.6.1
+* Visual Studio 2015 if you prefer IDE or of you may use git console and msbuild
+* Access to nuget repository
+* Xunit and Moq for testing framework
+* Autofac for Dependency Injection
+* CommandLineParser for verbs
+* log4net for logging
+* Newtonsoft.Json for json support
+* xunit.runner.visualstudio if you prefer visual studio for test outputs
+
+# Source code struture. Feature based folder structure
+
+ ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/pricebasketfolders.png)

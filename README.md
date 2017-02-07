@@ -1,5 +1,5 @@
 # PriceBasket 
-Price a basket of goods taking into account some special offers. This is a **realtime** multi-threaded basket pricer. Realtime means that this system provides verbs / api such that admin team located at a diferent location can add or update the system with new price economics or add a new product, and the system will immediately take the changes into consideration for a seller who is located at a different location for the basket to be correctly priced using active current economics; without requiring a system restart for the change to take effect. 
+Price a basket of goods taking into account some special offers. This is a **realtime** multi-threaded basket pricer. *Realtime* implies that this system provides verbs / api such that admin team seated at a diferent location can add or update the system with new price economics or add a new product, and the system will immediately take the changes into consideration for a seller who is located at a completely different location. The system will price the basket correctly using active current economics; without requiring a system restart for the change to take effect. 
 
 An Example Price Economics 
   * Soup – 65p per tin
@@ -14,7 +14,7 @@ Example special offers:
 # System Usage
 1. Start the system and issue command verbs. The system takes json as datastream.
 
-  Commands verbs supported are
+  Commands verbs currently supported are
 ~~~
 pricebasket     verb to price a basket of Items. This shows basket Subtotal , discount and Total
 
@@ -64,3 +64,6 @@ pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Na
 # Source code struture. Feature based folder structure
 
  ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/pricebasketfolders.png)
+ 
+# Xunit Unit Tests using Re-sharper Console
+ ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/pricebasketUnit-tests.png)

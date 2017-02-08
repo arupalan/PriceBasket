@@ -61,6 +61,51 @@ pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Na
 * Newtonsoft.Json for json support
 * xunit.runner.visualstudio if you prefer visual studio for test outputs
 
+# System Architecture Diagram
+
+![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/pricebasket.jpg)
+
+## Modules Components
+* BasketPricer
+* BasketEconomicsManager
+* BasketPriceReporter
+* CommandProcessor
+* LoggingModule (Extension of AutofacModule to facilitate Ilog injection )
+* DependencyInjector (Autofac Injection Helper)
+
+### Models
+* **Basket**  *Encapsulates the list of items in the basket. The basket SubTotal, and the Total and the constituent items. Note the properties are readonly so that once a basket is created the computed prices cannot be changed which is specific to the constituents of the basket. Note that the basket is immutable.*
+
+* **BasketItemEconomics** *Encapsulates a product economics like Price , Discount and MultiPackDiscount. Note the IEqualityComparer uses the Name field. In production implementation it will be useful to have additional identified like barcode sku etc. For simplicity of json; it is as it is but will be advantageous to have the economics as readonly. You can leverage json schema validation and a factory to provide immutability.*
+
+* **MultiDiscount** *Encapsulates Discount which is active only at basket level. ItemName is the name of another item whose number of unit has to match to be equal or greater than at the basket level for this Discount to be applied*
+
+* **BasketRequestItem** *Encapsulates a BasketRequestItem which is requested to be added to the basket. For simplicity of json; it is as it is but will be advantageous to have the Name and Unit as readonly. You can leverage json schema validation and a factory to provide this immutability.*
+
+* **BasketResultItem** *Encapsulates a priced BasketRequestItem which is requested to be added to the basket. For simplicity of json; it is as it is but will be advantageous to have the Name and Unit as readonly. You can leverage json schema validation and a factory to provide this immutability.*
+
+* **BasketEconomicsManager** *Encapsulates the active list of BasketItemEconomics. Internally the active list of economics are maintained inside a ConcurrentDictionary. This also allows to reset (add,update) the internal BasketItemEconomics*
+
+### Components
+* **BasketPricer** *Encapsulates the Pricing Logic for of a list of requested Basket Items. The List of Items are enumerated for Active MultipackDiscount. If one is active then the discount is set to the MultiPackDiscount else it defaults to normal discount*
+
+* **BasketEconomicsManager** *Encapsulates the active list of BasketItemEconomics. Internally the active list of economics are maintained inside a ConcurrentDictionary. This allows to reset (add,update) the internal BasketItemEconomics concurrently*
+
+* **BasketPriceReporter** *Encapsulates the reporting of a Basket SubTotal , per item Discount and the Basket Total.*
+
+* **CommandProcessor** *Encapsulates Command Verbs processing and converts valids verb json datastream into objects. Json is used for passing data as it provides immense felxibility and is an industry standard. Most of the enterprise distributed products like elasticsearch , stackifyy and many others uses json as standard. Also most browsers can interpret json natively*
+
+### Modules
+
+* **PriceBasket.Business** *implements the components **BasketPricer** , **BasketEconomicsManager** , **BasketPriceReporter** and **CommandProcessor** *
+
+* **LoggingModule** *Extension of AutoFac.Module to faciliate Log4Net ILog injection*
+
+* **DependencyInjector** *Autofac dependency injection Helper*
+
+### Host
+* **PriceBasket.Service** host the Modules 
+
 # Source code struture. Feature based folder structure
 
  ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/pricebasketfolders.png)

@@ -82,6 +82,8 @@ pricebasket --basket "[{'Name':'Apple', 'Unit':1},{'Name':'Milk', 'Unit':1},{'Na
 
 * **BasketRequestItem** *Encapsulates a BasketRequestItem which is requested to be added to the basket. For simplicity of json; it is as it is but will be advantageous to have the Name and Unit as readonly. You can leverage json schema validation and a factory to provide this immutability.*
 
+* **BasketResultItem** *Encapsulates a priced BasketRequestItem which is requested to be added to the basket. For simplicity of json; it is as it is but will be advantageous to have the Name and Unit as readonly. You can leverage json schema validation and a factory to provide this immutability.*
+
 # Source code struture. Feature based folder structure
 
  ![Console Mode](http://www.alanaamy.net/wp-content/uploads/2017/02/pricebasketfolders.png)

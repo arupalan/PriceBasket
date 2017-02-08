@@ -15,7 +15,9 @@ using PriceBasket.Business.Verbs;
 
 namespace PriceBasket.Service
 {
-
+    /// <summary>
+    /// This the main Loop of the application and this initiates the orchestration of all the components
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
@@ -38,6 +40,10 @@ namespace PriceBasket.Service
             }
         }
 
+        /// <summary>
+        /// Initialzies the Basket economics manager. In real application the
+        /// economics could be sourced from a database of other persistant store
+        /// </summary>
         private static void Initialize()
         {
             var logger = DependencyInjector.Resolve<ILog>();

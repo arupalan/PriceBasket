@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace PriceBasket.Business.Economics
 {
+    /// <summary>
+    /// Encapsulates the active list of BasketItemEconomics. 
+    /// Internally the active list of economics are maintained inside a ConcurrentDictionary.
+    /// This also allows to reset (add,update) the internal BasketItemEconomics
+    /// </summary>
     public class BasketEconomicsManager : IBasketEconomicsManager
     {
         private readonly ConcurrentDictionary<string, BasketItemEconomics> basketItemEconomicses;
@@ -19,6 +24,11 @@ namespace PriceBasket.Business.Economics
             basketItemEconomicses = new ConcurrentDictionary<string, BasketItemEconomics>();
         }
 
+        /// <summary>
+        /// Allows reset (add,update) the internal BasketItemEconomics
+        /// </summary>
+        /// <param name="economicItems"></param>
+        /// <returns></returns>
         public async Task ResetItemEconomicsAsync(List<BasketItemEconomics> economicItems)
         {
             foreach (var item in economicItems)

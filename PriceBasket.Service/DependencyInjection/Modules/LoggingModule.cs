@@ -6,6 +6,9 @@ using log4net;
 
 namespace PriceBasket.Service.DependencyInjection.Modules
 {
+    /// <summary>
+    /// Extension of AutoFac.Module to faciliate Log4Net ILog injection
+    /// </summary>
     public class LoggingModule : Autofac.Module
     {
         private static void InjectLoggerProperties(object instance)

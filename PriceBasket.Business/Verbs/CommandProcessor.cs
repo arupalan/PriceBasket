@@ -12,6 +12,12 @@ using PriceBasket.Business.Reporter;
 
 namespace PriceBasket.Business.Verbs
 {
+    /// <summary>
+    /// Encapsulates Command Verbs processing and converts valids verb json datastream into objects.
+    /// Json is used for passing data as it provides immense felxibility and is an industry standard
+    /// Most of the enterprise distributed products like elasticsearch , stackifyy and many others uses json as standard.
+    /// Also most browsers can interpret json natively 
+    /// </summary>
     public class CommandProcessor : ICommandProcessor
     {
         private readonly ILog logger;
@@ -99,7 +105,7 @@ namespace PriceBasket.Business.Verbs
                         try
                         {
                             await economicsManager.ResetItemEconomicsAsync(itemEconomics);
-                            logger.Info(string.Format("Current Active Economics...{0}", JsonConvert.SerializeObject(itemEconomics)));
+                            logger.Info($"Current Active Economics...{JsonConvert.SerializeObject(itemEconomics)}");
                         }
                         catch (AggregateException ex)
                         {

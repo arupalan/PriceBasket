@@ -10,6 +10,11 @@ using PriceBasket.Business.Models;
 
 namespace PriceBasket.Business.Pricing
 {
+    /// <summary>
+    /// Encapsulates the Pricing Logic for of a list of requested Basket Items.
+    /// The List of Items are enumerated for Active MultipackDiscount. If one is active 
+    /// then the discount is set to the MultiPackDiscount else defaults to normal discount
+    /// </summary>
     public class BasketPricer : IBasketPricer
     {
 
@@ -19,10 +24,16 @@ namespace PriceBasket.Business.Pricing
         public BasketPricer(IBasketEconomicsManager basketEconomicsManager, ILog logger)
         {
             this.logger = logger;
-            logger.Info("BasketPricer Constructor Initialized");
+            logger.Debug("BasketPricer Constructor Initialized");
             this.basketEconomicsManager = basketEconomicsManager;
         }
 
+        /// <summary>
+        /// Pricing Logic for BasketItems. The List of Items are enumerated for Active MultipackDiscount. If one is active 
+        /// then the discount is set to the MultiPackDiscount else defaults to normal discount.  
+        /// </summary>
+        /// <param name="basketItems"></param>
+        /// <returns>Basket with computed SubTotal , Discount and Total </returns>
         public async Task<Basket> PriceAsync(List<BasketRequestItem> basketItems)
         {
             var result = new List<BasketResultItem>();
@@ -56,6 +67,12 @@ namespace PriceBasket.Business.Pricing
             return await Task.FromResult(new Basket(result,subTotal,total));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="multipackDiscount"></param>
+        /// <param name="basketItems"></param>
+        /// <returns>true if the basket has a multipack item and the number of units else false</returns>
         private bool IsValidMultiPack(MultiDiscount multipackDiscount, List<BasketRequestItem> basketItems)
         {
             return

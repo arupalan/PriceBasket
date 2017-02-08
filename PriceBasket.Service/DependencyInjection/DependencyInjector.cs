@@ -15,6 +15,9 @@ using PriceBasket.Business.Reporter;
 
 namespace PriceBasket.Service.DependencyInjection
 {
+    /// <summary>
+    /// Autofac dependency injection Helper
+    /// </summary>
     public static class DependencyInjector
     {
         private static readonly IContainer container;

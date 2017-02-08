@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 
 namespace PriceBasket.Business.Reporter
 {
+    /// <summary>
+    /// Encapsulates the reporting of a Basket SubTotal , per item Discount and the Basket Total.
+    /// </summary>
     public class BasketPriceReporter : IBasketPriceReporter
     {
         private readonly ILog logger;
@@ -17,9 +20,14 @@ namespace PriceBasket.Business.Reporter
         {
             this.logger = logger;
         }
+        /// <summary>
+        /// Reports a Basket onto console as a Basket SubTotal , per item Discount and the Basket Total.
+        /// </summary>
+        /// <param name="basket"></param>
+        /// <returns></returns>
         public async Task ReportAsync(Basket basket)
         {
-            logger.Debug(string.Format("Generating report for result {0}", JsonConvert.SerializeObject(basket.BasketItems)));
+            logger.Debug($"Generating report for result {JsonConvert.SerializeObject(basket.BasketItems)}");
             var nfi = new CultureInfo("en-GB", false).NumberFormat;
             nfi.PercentDecimalDigits = 0;
             Console.WriteLine("Subtotal: {0}", (basket.SubTotal??0.0M).ToString("C2", CultureInfo.CreateSpecificCulture("en-GB")));
